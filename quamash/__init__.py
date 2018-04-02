@@ -397,13 +397,22 @@ class _QEventLoop(asyncio.AbstractEventLoop):
 					'Exception in default exception handler while handling an unexpected error '
 					'in custom exception handler', exc_info=True)
 
-	# Debug flag management.
+	def create_future(self):
+		return asyncio.Future(loop=self)
 
+	def create_task(self, coro):
+		if self.is_closed():
+			raise RuntimeError("Event loop is closed")
+		task = asyncio.Task(coro, loop=self)
+		if task._source_traceback:
+			del task._source_traceback[-1]
+		return task
+
+	# Debug flag management.
 	def get_debug(self):
 		return self.__debug_enabled
 
 	def set_debug(self, enabled):
-		super().set_debug(enabled)
 		self.__debug_enabled = enabled
 
 	def __enter__(self):
