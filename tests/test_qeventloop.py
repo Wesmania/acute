@@ -337,9 +337,8 @@ def test_not_running_immediately_after_stopped(loop):
 
 
 def test_can_await_signal(loop):
-	caller = SignalCaller()
-
 	async def mycoro():
+		caller = SignalCaller()
 		sigs = quamash.AsyncSignals([caller.first_signal])
 		caller.timed()
 		(sender, result) = await sigs
@@ -350,9 +349,8 @@ def test_can_await_signal(loop):
 
 
 def test_signals_delivered_before_await_work(loop):
-	caller = SignalCaller()
-
 	async def mycoro():
+		caller = SignalCaller()
 		sigs = quamash.AsyncSignals([caller.first_signal])
 		caller.immediate()
 		(sender, result) = await sigs
@@ -363,9 +361,8 @@ def test_signals_delivered_before_await_work(loop):
 
 
 def test_can_await_signal_multiple_times(loop):
-	caller = SignalCaller()
-
 	async def mycoro():
+		caller = SignalCaller()
 		sigs = quamash.AsyncSignals([caller.first_signal])
 		sigs2 = quamash.AsyncSignals([caller.second_signal])
 		caller.timed()
@@ -381,13 +378,28 @@ def test_can_await_signal_multiple_times(loop):
 
 
 def test_can_await_multiple_signals(loop):
-	caller = SignalCaller()
-
 	async def mycoro():
+		caller = SignalCaller()
 		sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
 		caller.timed()
 		(sender, result) = await sigs
 		number, = result
 		assert sender == 0
 		assert number == 1
+	loop.run_until_complete(mycoro())
+
+
+def test_multiple_signals_get_queued(loop):
+	async def mycoro():
+		caller = SignalCaller()
+		sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
+		caller.immediate()
+		(sender, result) = await sigs
+		number, = result
+		assert sender == 0
+		assert number == 1
+		(sender, result) = await sigs
+		number, = result
+		assert sender == 1
+		assert number == 2
 	loop.run_until_complete(mycoro())
