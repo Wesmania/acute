@@ -81,7 +81,6 @@ class AsyncSignals(QtCore.QObject):
 			self._loop = asyncio.get_event_loop()
 		self._callbacks = set()
 		self.results = []
-		self.cancelled = False
 		self._logger.debug("Wrapping signals: {}".format(signals))
 		for i, s in enumerate(signals):
 			def cb(*args, i=i):
@@ -94,19 +93,7 @@ class AsyncSignals(QtCore.QObject):
 		self.results.append((i, args))
 		self.done.emit(self)
 
-	def _disconnect(self):
-		for s, cb in self._callbacks:
-			s.disconnect(cb)
-		self._callbacks.clear()
-
-	def cancel(self):
-		self._disconnect()
-		self._logger.debug("Cancelled async signal")
-		self.results.clear()
-		self.cancelled = True
-
 	def __await__(self):
-		self.cancelled = False
 		future = self._loop.create_future()
 		h = future._loop.call_when_done(self, self._set_future_result, future)
 		try:
