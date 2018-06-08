@@ -69,6 +69,42 @@ class _SimpleTimer(QtCore.QObject):
 		self._stopped = True
 
 
+class _DoneSignal(QtCore.QObject):
+	done = QtCore.pyqtSignal(object)
+
+	def __init__(self):
+		super().__init__()
+
+
+class SignalMixin:
+	def __init__(self):
+		self._done_signal = None
+
+	@property
+	def done_signal(self):
+		if self._done_signal is None:
+			self._done_signal = _DoneSignal()
+		return self._done_signal.done
+
+	def emit_done_signal(self, result):
+		if self._done_signal is not None:
+			self.done_signal.emit(result)
+
+
+class SignalTask(asyncio.Task, SignalMixin):
+	def __init__(self, *args, **kwargs):
+		asyncio.Task.__init__(self, *args, **kwargs)
+		SignalMixin.__init__(self)
+		self.add_done_callback(self.emit_done_signal)
+
+
+class SignalFuture(asyncio.Future, SignalMixin):
+	def __init__(self, *args, **kwargs):
+		asyncio.Future.__init__(self, *args, **kwargs)
+		SignalMixin.__init__(self)
+		self.add_done_callback(self.emit_done_signal)
+
+
 @with_logger
 class AsyncSignals(QtCore.QObject):
 	done = QtCore.pyqtSignal(object)
@@ -180,6 +216,7 @@ class _QEventLoop(asyncio.AbstractEventLoop):
 			self._logger.debug('Starting Qt event loop')
 			rslt = self.__app.exec_()
 			self._logger.debug('Qt event loop ended with result {}'.format(rslt))
+			self.__app.processEvents()  # run loop one last time to process all the events
 			return rslt
 		finally:
 			self.__is_running = False
@@ -195,7 +232,6 @@ class _QEventLoop(asyncio.AbstractEventLoop):
 			self.run_forever()
 		finally:
 			future.remove_done_callback(stop)
-		self.__app.processEvents()  # run loop one last time to process all the events
 		if not future.done():
 			raise RuntimeError('Event loop stopped before Future completed.')
 
@@ -382,12 +418,12 @@ class _QEventLoop(asyncio.AbstractEventLoop):
 					'in custom exception handler', exc_info=True)
 
 	def create_future(self):
-		return asyncio.Future(loop=self)
+		return SignalFuture(loop=self)
 
 	def create_task(self, coro):
 		if self.is_closed():
 			raise RuntimeError("Event loop is closed")
-		task = asyncio.Task(coro, loop=self)
+		task = SignalTask(coro, loop=self)
 		if task._source_traceback:
 			del task._source_traceback[-1]
 		return task
