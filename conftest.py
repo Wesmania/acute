@@ -30,13 +30,8 @@ except ImportError:
 	logging.basicConfig(
 		level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-if os.name == 'nt':
-	collect_ignore = ['quamash/_unix.py']
-else:
-	collect_ignore = ['quamash/_windows.py']
-
 
 @fixture(scope='session')
 def application():
-	from quamash import QApplication
+	from acute import QApplication
 	return QApplication([])

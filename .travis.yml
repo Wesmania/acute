@@ -58,7 +58,7 @@ install:
   - pip install flake8 pep8-naming flake8-debugger flake8-docstrings pytest-timeout flake8-commas
 script:
   - flake8
-  - flake8 --select=D1 quamash/*.py
+  - flake8 --select=D1 acute/*.py
   - if [ $TRAVIS_PYTHON_VERSION != '3.5' && $TRAVIS_PYTHON_VERSION != '3.6']; then QUAMASH_QTIMPL=PySide py.test; fi
   - QUAMASH_QTIMPL=PyQt4 py.test
   - QUAMASH_QTIMPL=PyQt5 py.test

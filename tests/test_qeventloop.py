@@ -13,7 +13,7 @@ import subprocess
 import weakref
 import gc
 
-import quamash
+import acute
 
 import pytest
 
@@ -23,7 +23,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 @pytest.fixture
 def loop(request, application):
-	lp = quamash.QEventLoop(application)
+	lp = acute.QEventLoop(application)
 	asyncio.set_event_loop(lp)
 
 	additional_exceptions = []
@@ -181,8 +181,8 @@ def test_loop_not_running(loop):
 
 def test_can_function_as_context_manager(application):
 	"""Verify that a QEventLoop can function as its own context manager."""
-	with quamash.QEventLoop(application) as loop:
-		assert isinstance(loop, quamash.QEventLoop)
+	with acute.QEventLoop(application) as loop:
+		assert isinstance(loop, acute.QEventLoop)
 		loop.call_soon(loop.stop)
 		loop.run_forever()
 
@@ -341,7 +341,7 @@ def test_not_running_immediately_after_stopped(loop):
 def test_can_await_signal(loop):
 	async def mycoro():
 		caller = SignalCaller()
-		sigs = quamash.AsyncSignals([caller.first_signal])
+		sigs = acute.AsyncSignals([caller.first_signal])
 		caller.timed()
 		(sender, result) = await sigs
 		number, = result
@@ -353,7 +353,7 @@ def test_can_await_signal(loop):
 def test_signals_delivered_before_await_work(loop):
 	async def mycoro():
 		caller = SignalCaller()
-		sigs = quamash.AsyncSignals([caller.first_signal])
+		sigs = acute.AsyncSignals([caller.first_signal])
 		caller.immediate()
 		(sender, result) = await sigs
 		number, = result
@@ -365,8 +365,8 @@ def test_signals_delivered_before_await_work(loop):
 def test_can_await_signal_multiple_times(loop):
 	async def mycoro():
 		caller = SignalCaller()
-		sigs = quamash.AsyncSignals([caller.first_signal])
-		sigs2 = quamash.AsyncSignals([caller.second_signal])
+		sigs = acute.AsyncSignals([caller.first_signal])
+		sigs2 = acute.AsyncSignals([caller.second_signal])
 		caller.timed()
 		(sender, result) = await sigs
 		number, = result
@@ -382,7 +382,7 @@ def test_can_await_signal_multiple_times(loop):
 def test_can_await_multiple_signals(loop):
 	async def mycoro():
 		caller = SignalCaller()
-		sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
+		sigs = acute.AsyncSignals([caller.first_signal, caller.second_signal])
 		caller.timed()
 		(sender, result) = await sigs
 		number, = result
@@ -394,7 +394,7 @@ def test_can_await_multiple_signals(loop):
 def test_multiple_signals_get_queued(loop):
 	async def mycoro():
 		caller = SignalCaller()
-		sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
+		sigs = acute.AsyncSignals([caller.first_signal, caller.second_signal])
 		caller.immediate()
 		(sender, result) = await sigs
 		number, = result
@@ -409,7 +409,7 @@ def test_multiple_signals_get_queued(loop):
 
 def test_async_signals_get_cleaned_up(loop):
 	caller = SignalCaller()
-	sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
+	sigs = acute.AsyncSignals([caller.first_signal, caller.second_signal])
 
 	async def mycoro(caller, sigs):
 		caller.immediate()
@@ -432,7 +432,7 @@ def test_async_signals_get_cleaned_up(loop):
 
 def test_future_signals(loop):
 	caller = SignalCaller()
-	sigs = quamash.AsyncSignals([caller.first_signal, caller.second_signal])
+	sigs = acute.AsyncSignals([caller.first_signal, caller.second_signal])
 	signalled = False
 
 	async def mycoro(caller, sigs):

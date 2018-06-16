@@ -37,5 +37,5 @@ RUN \
     make clean && make && make install; \
     ) \
   done
-ADD . /quamash
-WORKDIR /quamash
+ADD . /acute
+WORKDIR /acute

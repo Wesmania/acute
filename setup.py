@@ -1,9 +1,9 @@
 from setuptools import setup
-import quamash
+import acute
 import re
 import os.path
 
-groups = re.findall(r'(.+?) <(.+?)>(?:,\s*)?', quamash.__author__)
+groups = re.findall(r'(.+?) <(.+?)>(?:,\s*)?', acute.__author__)
 authors = [x[0].strip() for x in groups]
 emails = [x[1].strip() for x in groups]
 
@@ -12,14 +12,14 @@ with open(desc_path, encoding='utf8') as desc_file:
 	long_description = desc_file.read()
 
 setup(
-	name='Quamash',
-	version=quamash.__version__,
-	url=quamash.__url__,
+	name='Acute',
+	version=acute.__version__,
+	url=acute.__url__,
 	author=', '.join(authors),
 	author_email=', '.join(emails),
-	packages=['quamash', ],
-	license=quamash.__license__,
-	description=quamash.__doc__,
+	packages=['acute', ],
+	license=acute.__license__,
+	description=acute.__doc__,
 	long_description=long_description,
 	keywords=['Qt', 'asyncio'],
 	classifiers=[

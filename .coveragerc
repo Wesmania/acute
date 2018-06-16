@@ -21,5 +21,5 @@ exclude_lines =
 
 [paths]
 source=
-	/quamash/  # change to linux source path
-	C:\quamash\ # change to windows source path
+	/acute/  # change to linux source path
+	C:\acute\ # change to windows source path
