@@ -35,7 +35,6 @@ setup(
 		'Programming Language :: Python :: 3 :: Only',
 		'Environment :: X11 Applications :: Qt',
 	],
-	# FIXME depends on PyQt4, PyQt5 or PySide, but cannot put that in a setup.py
 	extras_require={
 		'test': ['pytest'],
 	},

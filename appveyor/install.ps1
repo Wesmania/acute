@@ -22,7 +22,7 @@ function InstallPip ($python_home) {
 
 function InstallPackage ($python_home, $pkg) {
 	$pip_path = $python_home + "\Scripts\pip.exe"
-	& $pip_path install --only-binary=PySide --only-binary=PyQt4 --only-binary=PyQt5 --find-links .\wheelhouse $pkg
+	& $pip_path install --only-binary=PyQt5 --find-links .\wheelhouse $pkg
 }
 
 function main () {
@@ -32,12 +32,6 @@ function main () {
 	InstallPackage $env:PYTHON wheel
 	InstallPackage $env:PYTHON pytest
 	switch ($env:QTIMPL){
-		"PySide" {
-			InstallPackage $env:Python PySide
-		}
-		"PyQt4" {
-			InstallPackage $env:Python PyQt4
-		}
 		"PyQt5" {
 			InstallPackage $env:Python PyQt5
 		}
