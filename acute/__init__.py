@@ -3,7 +3,7 @@
 # BSD License
 """Implementation of the PEP 3156 Event-Loop with Qt."""
 
-__author__ = 'Mark Harviston <mark.harviston@gmail.com>, Arve Knudsen <arve.knudsen@gmail.com>'
+__author__ = 'Igor Kotrasinski <i.kotrasinsk@gmail.com>, Mark Harviston <mark.harviston@gmail.com>, Arve Knudsen <arve.knudsen@gmail.com>'
 __version__ = '0.1.0'
 __url__ = 'https://github.com/Wesmania/acute'
 __license__ = 'BSD'
