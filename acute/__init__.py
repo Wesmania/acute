@@ -70,7 +70,7 @@ class _SimpleTimer(QtCore.QObject):
 
 
 class _DoneSignal(QtCore.QObject):
-	done = QtCore.pyqtSignal(object)
+	done = QtCore.pyqtSignal(object, object)
 
 	def __init__(self):
 		super().__init__()
@@ -88,7 +88,7 @@ class SignalMixin:
 
 	def emit_done_signal(self, result):
 		if self._done_signal is not None:
-			self.done_signal.emit(result)
+			self.done_signal.emit(result, self)
 
 
 class SignalTask(asyncio.Task, SignalMixin):
